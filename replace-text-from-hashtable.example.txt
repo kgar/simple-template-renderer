@@ -1,3 +1,0 @@
-This is the __adjective__ file replacement scheme 
-where we use a hashtable in the shape of a/an __noun__  
-to replace our tagged fields __adverb__.

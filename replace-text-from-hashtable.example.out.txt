@@ -1,3 +1,0 @@
-This is the fucshia file replacement scheme 
-where we use a hashtable in the shape of a/an elephante  
-to replace our tagged fields slovenly.

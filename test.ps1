@@ -1,0 +1,1 @@
+dotnet run --project ./src/KGar.TemplateProjectGenerator "D:\Workbench\programming-game-ai-by-example\Buckland_Chapter2-State Machines\WestWorldWithMessagingCSharp\WestWorld1.csproj" "C:\Test" "./template-variables.json"
