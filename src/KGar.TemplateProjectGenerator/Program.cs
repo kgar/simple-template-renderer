@@ -2,11 +2,16 @@
 
 namespace KGar.TemplateProjectGenerator
 {
-    static class Program
+    internal static class Program
     {
         private static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            // dotnet template-project-generator <TEMPLATEPROJECTPATH> <GENERATEDPROJECTPATH> --template-vars-dir <PATH>
+            // dotnet template-project-generator "./TemplateProject/TemplateProject.csproj" "./GeneratedProject/GeneratedProject.csproj" --template-vars-dir "./settings.json" 
+            foreach (var arg in args)
+            {
+                System.Console.WriteLine(arg);
+            }
         }
     }
 }
