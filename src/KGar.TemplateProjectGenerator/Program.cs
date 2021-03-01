@@ -28,16 +28,29 @@ namespace KGar.TemplateProjectGenerator
                 return;
             }
 
-            var templateProjectPath = args[0];
+            var (isValid, parsedArgs) = AssertValid(args);
 
-            if (!File.Exists(templateProjectPath) && !Directory.Exists(templateProjectPath))
+            if (!isValid)
             {
-                WriteError("Template Project path/file not found.");
                 return;
             }
-            // var templatePathIsProject = templateProjectPath.EndsWith(".csproj", true, System.Globalization.CultureInfo.CurrentCulture);
-            var templateProjectDir = Path.GetDirectoryName(templateProjectPath);
-            var files = Directory.GetFiles(templateProjectDir, "*", SearchOption.AllDirectories);
+
+            GenerateFromTemplate(parsedArgs);
+        }
+
+        private static (bool isValid, Args parsedArgs) AssertValid(string[] args)
+        {
+            var templatePath = args[0];
+
+            if (!File.Exists(templatePath) && !Directory.Exists(templatePath))
+            {
+                WriteError("Template Project path/file not found.");
+                return (false, null);
+            }
+
+            var templateProjectDir = File.Exists(templatePath)
+                ? Path.GetDirectoryName(templatePath)
+                : templatePath;
 
             var outputPath = args[1];
             try
@@ -48,24 +61,76 @@ namespace KGar.TemplateProjectGenerator
             catch
             {
                 WriteError("Unable to execute. Output path is not valid.");
-                return;
+                return (false, null);
             }
 
             var jsonPath = args[2];
             if (!File.Exists(jsonPath))
             {
                 WriteError("Unable to execute. Template Variables JSON Path <TEMPLATEVARIABLESJSONPATH> file not found.");
-                return;
+                return (false, null);
             }
 
-            var jsonData = JsonSerializer
+            Dictionary<string, string> jsonData;
+
+            try
+            {
+                jsonData = JsonSerializer
                 .Deserialize<Dictionary<string, string>>(
                     File.ReadAllText(jsonPath));
-
-            foreach (var key in jsonData.Keys)
-            {
-                System.Console.WriteLine($"Key: {key} | Value: {jsonData[key]}");
             }
+            catch
+            {
+                WriteError("Unable to execute. Valid template variables JSON cannot be found.");
+                return (false, null);
+            }
+
+            var parsedArgs = new Args
+            {
+                OutputDirectory = outputPath,
+                TemplateDirectory = templateProjectDir,
+                TemplateVariables = jsonData
+            };
+
+            return (true, parsedArgs);
+        }
+
+        private static void GenerateFromTemplate(Args args)
+        {
+            var files = Directory.GetFiles(args.TemplateDirectory, "*", SearchOption.AllDirectories);
+            foreach (var file in files)
+            {
+                var text = File.ReadAllText(file);
+                Console.WriteLine($"source: {file}");
+                Console.WriteLine($"original contents: {text}");
+
+                var target = file.Replace(args.TemplateDirectory, args.OutputDirectory);
+                Console.WriteLine($"target: {target}");
+
+                var transformedTarget = TransformText(target, args.TemplateVariables);
+                Console.WriteLine($"transformed target: {transformedTarget}");
+
+                var transformedText = TransformText(text, args.TemplateVariables);
+                Console.WriteLine($"transformed contents: {transformedText}");
+            }
+        }
+
+        private static string TransformText(string text, Dictionary<string, string> variables)
+        {
+            // TODO: See if string replace can take an array of criteria
+            foreach (var key in variables.Keys)
+            {
+                var token = GetTemplateToken(key);
+                var replacementValue = variables[key];
+                text = text.Replace(token, replacementValue);
+            }
+
+            return text;
+        }
+
+        private static string GetTemplateToken(string variableName)
+        {
+            return $"__{variableName}__";
         }
 
         private static void WriteError(string message)

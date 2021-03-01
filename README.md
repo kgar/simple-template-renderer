@@ -11,11 +11,13 @@ This is the first time I've needed such a thing in my career so far, but I was h
 I feel like it might help others, so I'm putting it all out here. Who knows, maybe someone else will need to automate things like generating multiple projects and adding them to a solution.
 
 ## To Do
-- Establish the args for calling the tool
-- Code the logic for recursively reading / writing the project files from one location to another
-- Apply template key-value-pair replacements to file contents when preparing to write to the new location
-- Apply template key-value-pair replacements to file names when preparing to write to the new location
+- Create a test project with template tokens for replacement
+  - In files
+  - In file names
+- Switch from console logging to actual file creation
 - Apply error handling for edge cases
+- Do validation better
+  - What is needed for dotnet tool failure cases? Do you need something special for these command line tools to register failure with a build pipeline?
 - Figure out how to detect read/write permissions early on, before the generator gets too far into processing
 - Apply input validation
 - Create tool documentation
