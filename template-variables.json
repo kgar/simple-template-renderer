@@ -1,4 +1,4 @@
 {
-  "hello": "world!",
-  "foo": "zan"
+  "Message": "Hello from a template variable JSON file!",
+  "TemplateName": "Generated"
 }

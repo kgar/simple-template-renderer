@@ -6,7 +6,7 @@ namespace __TemplateName__Console
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("__Message__");
         }
     }
 }

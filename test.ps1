@@ -1,1 +1,4 @@
-dotnet run --project ./src/KGar.TemplateProjectGenerator "E:\Workbench\programming-game-ai-by-example\Buckland_Chapter2-State Machines\WestWorldWithMessagingCSharp\WestWorld1.csproj" "C:\Test" "./template-variables.json"
+dotnet run --project ./src/KGar.TemplateProjectGenerator `
+    "./test-solution-and-projects/__TemplateName__Console" `
+    "./test-solution-and-projects/GeneratedProject" `
+    "./template-variables.json"
