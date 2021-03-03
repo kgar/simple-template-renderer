@@ -14,12 +14,20 @@ namespace KGar.TemplateProjectGenerator
         {
             var rootCommand = new RootCommand
             {
-                new Argument<string>("--templatePath", "The path to the template directory or file."),
-                new Argument<DirectoryInfo>("--outputPath", "The path to the destination directory or file."),
-                new Argument<FileInfo>("--templateVariablesPath", "The path to the JSON template variables object."),
-                new Option<FileInfo> ("--gitignore", "Optional path to a gitignore file to use when determining what to copy.")
+                new Argument<string>(
+                    "--templatePath",
+                    "The path to the template directory or file."),
+                new Argument<DirectoryInfo>(
+                    "--outputPath",
+                    "The path to the destination directory or file."),
+                new Argument<FileInfo>(
+                    "--templateVariablesPath",
+                    "The path to the JSON template variables object."),
+                new Option<FileInfo> (
+                    "--gitignore",
+                    "Optional path to a gitignore file to use when determining what to copy.")
             };
-            rootCommand.Description = "Test description";
+            rootCommand.Description = "TODO: Describe meeeeeee";
 
             rootCommand.Handler = CommandHandler.Create<string, DirectoryInfo, FileInfo, FileInfo>((
                 templatePath,
