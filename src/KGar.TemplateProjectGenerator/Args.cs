@@ -8,6 +8,6 @@ namespace KGar.TemplateProjectGenerator
         public string TemplatePath { get; internal set; }
         public DirectoryInfo OutputDirectory { get; internal set; }
         public Dictionary<string, string> TemplateVariables { get; internal set; }
-        public FileInfo? Gitignore { get; internal set; }
+        public FileInfo Gitignore { get; internal set; }
     }
 }
