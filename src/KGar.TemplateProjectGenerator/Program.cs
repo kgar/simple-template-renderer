@@ -1,110 +1,76 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.CommandLine;
+using System.CommandLine.Invocation;
 using System.IO;
-using System.Text;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace KGar.TemplateProjectGenerator
 {
     internal static class Program
     {
-        private static void Main(string[] args)
+        internal static Task<int> Main(string[] args)
         {
-            // <TEMPLATEPROJECTPATH> Path to the CSPROJ file 
-            // <OUTPUTPATH> Path to the generated CSPROJ file
-            // <TEMPLATEVARIABLESJSONPATH> Optional path to the JSON file with key-value-pairs to use when transforming the template 
-            // dotnet template-project-generator "./TemplateProject/TemplateProject.csproj" "./GeneratedProject/GeneratedProject.csproj" --template-vars-dir "./settings.json" 
-            if (args.Length < 3)
+            var rootCommand = new RootCommand
             {
-                var sb = new StringBuilder();
-                sb.Append("Could not execute because the required args were not provided. Args provided: ")
-                    .Append(args.Length)
-                    .AppendLine(". Args required: 3");
-                sb.AppendLine("  dotnet tool format:");
-                sb.AppendLine("    dotnet kgar-template-project-generator <TEMPLATEPROJECTPATH> <GENERATEDPROJECTPATH> <TEMPLATEVARIABLESJSONPATH>");
-                sb.AppendLine("  local build dotnet run format:");
-                sb.AppendLine("    dotnet run <TEMPLATEPROJECTPATH> <OUTPUTPATH> <TEMPLATEVARIABLESJSONPATH>");
-                WriteError(sb.ToString());
-                return;
-            }
-
-            var (isValid, parsedArgs) = AssertValid(args);
-
-            if (!isValid)
-            {
-                return;
-            }
-
-            GenerateFromTemplate(parsedArgs);
-        }
-
-        private static (bool isValid, Args parsedArgs) AssertValid(string[] args)
-        {
-            var templatePath = args[0];
-
-            if (!File.Exists(templatePath) && !Directory.Exists(templatePath))
-            {
-                WriteError("Template Project path/file not found.");
-                return (false, null);
-            }
-
-            var templateProjectDir = File.Exists(templatePath)
-                ? Path.GetDirectoryName(templatePath)
-                : templatePath;
-
-            var outputPath = args[1];
-            try
-            {
-                var outputPathDirectory = Path.GetDirectoryName(outputPath);
-                Directory.CreateDirectory(outputPathDirectory);
-            }
-            catch
-            {
-                WriteError("Unable to execute. Output path is not valid.");
-                return (false, null);
-            }
-
-            var jsonPath = args[2];
-            if (!File.Exists(jsonPath))
-            {
-                WriteError("Unable to execute. Template Variables JSON Path <TEMPLATEVARIABLESJSONPATH> file not found.");
-                return (false, null);
-            }
-
-            Dictionary<string, string> jsonData;
-
-            try
-            {
-                jsonData = JsonSerializer
-                .Deserialize<Dictionary<string, string>>(
-                    File.ReadAllText(jsonPath));
-            }
-            catch
-            {
-                WriteError("Unable to execute. Valid template variables JSON cannot be found.");
-                return (false, null);
-            }
-
-            var parsedArgs = new Args
-            {
-                OutputDirectory = outputPath,
-                TemplateDirectory = templateProjectDir,
-                TemplateVariables = jsonData
+                new Argument<string>("--templatePath", "The path to the template directory or file."),
+                new Argument<DirectoryInfo>("--outputPath", "The path to the destination directory or file."),
+                new Argument<FileInfo>("--templateVariablesPath", "The path to the JSON template variables object."),
+                new Option<FileInfo> ("--gitignore", "Optional path to a gitignore file to use when determining what to copy.")
             };
+            rootCommand.Description = "Test description";
 
-            return (true, parsedArgs);
+            rootCommand.Handler = CommandHandler.Create<string, DirectoryInfo, FileInfo, FileInfo>((
+                templatePath,
+                outputPath,
+                templateVariablesPath,
+                gitignore) =>
+            {
+                var templateVariables = JsonSerializer
+                    .Deserialize<Dictionary<string, string>>(
+                        File.ReadAllText(templateVariablesPath.FullName));
+
+                var args = new Args
+                {
+                    TemplatePath = templatePath,
+                    OutputDirectory = outputPath,
+                    TemplateVariables = templateVariables,
+                    Gitignore = gitignore
+                };
+
+                GenerateFromTemplate(args);
+            });
+
+            return rootCommand.InvokeAsync(args);
         }
 
         private static void GenerateFromTemplate(Args args)
         {
-            var files = Directory.GetFiles(args.TemplateDirectory, "*", SearchOption.AllDirectories);
+            var files = Directory.GetFiles(args.TemplatePath, "*", SearchOption.AllDirectories);
+            var ignore = new Ignore.Ignore();
+            if (args.Gitignore.Exists)
+            {
+                ignore.Add(File.ReadAllText(args.Gitignore.FullName));
+            }
+
             foreach (var file in files)
             {
+                if (ignore.IsIgnored(file))
+                {
+                    continue;
+                }
+
                 var text = File.ReadAllText(file);
                 Console.WriteLine($"source: {file}");
                 Console.WriteLine($"original contents: {text}");
 
-                var target = file.Replace(args.TemplateDirectory, args.OutputDirectory);
+                var templateDirectory = Directory.Exists(args.TemplatePath)
+                    ? args.TemplatePath
+                    : Path.GetDirectoryName(args.TemplatePath);
+
+                var targetSubPath = file.Replace(templateDirectory, string.Empty);
+                var target = Path.Combine(args.OutputDirectory.FullName, targetSubPath);
                 Console.WriteLine($"target: {target}");
 
                 var transformedTarget = TransformText(target, args.TemplateVariables);
