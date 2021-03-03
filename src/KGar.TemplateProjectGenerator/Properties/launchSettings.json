@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "KGar.TemplateProjectGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "\"E:\\Workbench\\dotnet-template-project-generator\\test-solution-and-projects\\__TemplateName__Console\" \"E:\\Workbench\\dotnet-template-project-generator\\test-solution-and-projects\\HelloDarianConsole\"  \"E:\\Workbench\\dotnet-template-project-generator\\template-variables.json\" --gitignore \"E:\\Workbench\\dotnet-template-project-generator\\.gitignore\""
+    }
+  }
+}

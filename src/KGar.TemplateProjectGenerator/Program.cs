@@ -59,7 +59,7 @@ namespace KGar.TemplateProjectGenerator
             var ignore = new Ignore.Ignore();
             if (args.Gitignore.Exists)
             {
-                ignore.Add(File.ReadAllText(args.Gitignore.FullName));
+                ignore.Add(File.ReadAllLines(args.Gitignore.FullName));
             }
 
             foreach (var file in files)
