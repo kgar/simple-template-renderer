@@ -1,8 +1,7 @@
 {
   "profiles": {
     "KGar.TemplateProjectGenerator": {
-      "commandName": "Executable",
-      "executablePath": "F:\\Workbench\\powershell-text-replace-trials\\src\\KGar.TemplateProjectGenerator\\bin\\Debug\\net5.0\\template-renderer.exe",
+      "commandName": "Project",
       "commandLineArgs": "dir ..\\..\\..\\..\\..\\test-solution-and-projects\\__TemplateName__Console ..\\..\\..\\..\\..\\test-solution-and-projects\\  ..\\..\\..\\..\\..\\template-variables.json --gitignore ..\\..\\..\\..\\..\\.gitignore"
     }
   }
