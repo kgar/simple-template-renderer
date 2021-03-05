@@ -1,8 +1,9 @@
 {
   "profiles": {
     "KGar.TemplateProjectGenerator": {
-      "commandName": "Project",
-      "commandLineArgs": "\"E:\\Workbench\\dotnet-template-project-generator\\test-solution-and-projects\\__TemplateName__Console\" \"E:\\Workbench\\dotnet-template-project-generator\\test-solution-and-projects\\HelloDarianConsole\"  \"E:\\Workbench\\dotnet-template-project-generator\\template-variables.json\" --gitignore \"E:\\Workbench\\dotnet-template-project-generator\\.gitignore\""
+      "commandName": "Executable",
+      "executablePath": "F:\\Workbench\\powershell-text-replace-trials\\src\\KGar.TemplateProjectGenerator\\bin\\Debug\\net5.0\\template-renderer.exe",
+      "commandLineArgs": "dir ..\\..\\..\\..\\..\\test-solution-and-projects\\__TemplateName__Console ..\\..\\..\\..\\..\\test-solution-and-projects\\  ..\\..\\..\\..\\..\\template-variables.json --gitignore ..\\..\\..\\..\\..\\.gitignore"
     }
   }
 }
