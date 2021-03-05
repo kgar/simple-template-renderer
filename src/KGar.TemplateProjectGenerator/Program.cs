@@ -14,18 +14,18 @@ namespace KGar.TemplateProjectGenerator
         {
             var directoryCommand = new Command("dir", "Recursively render template content starting in a specified directory.")
             {
-                new Argument<DirectoryInfo>("--template", "The directory of the template content."),
-                new Argument<DirectoryInfo>("--output", "The directory where the rendered content should be placed."),
-                new Argument<FileInfo>("--variables", "The path to a JSON file with a flat object of template variables and their values."),
+                new Argument<DirectoryInfo>("template", "The directory of the template content."),
+                new Argument<DirectoryInfo>("output", "The directory where the rendered content should be placed."),
+                new Argument<FileInfo>("variables", "The path to a JSON file with a flat object of template variables and their values."),
                 new Option<FileInfo>("--gitignore", "The path to an optional gitignore file to filter out content when performing the operation."),
             };
             directoryCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo, FileInfo, FileInfo>(RenderTemplateDirectory);
 
             var fileCommand = new Command("file", "Render a template file.")
             {
-                new Argument<FileInfo>("--template", "The directory of the template content."),
-                new Argument<FileInfo>("--output", "The directory where the rendered content should be placed."),
-                new Argument<FileInfo>("--variables", "The path to a JSON file with a flat object of template variables and their values."),
+                new Argument<FileInfo>("template", "The directory of the template content."),
+                new Argument<FileInfo>("output", "The directory where the rendered content should be placed."),
+                new Argument<FileInfo>("variables", "The path to a JSON file with a flat object of template variables and their values."),
             };
             fileCommand.Handler = CommandHandler.Create<FileInfo, FileInfo, FileInfo>(RenderTemplateFile);
 
