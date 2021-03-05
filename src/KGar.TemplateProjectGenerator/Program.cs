@@ -40,13 +40,23 @@ namespace KGar.TemplateProjectGenerator
             return rootCommand.InvokeAsync(args);
         }
 
-        private static void RenderTemplateFile(FileInfo arg1, FileInfo arg2, FileInfo arg3)
+        private static void RenderTemplateFile(FileInfo template, FileInfo output, FileInfo variables)
         {
+            // TODO: Figure out how the CommandLine models can handle this parsing step...
+            var templateVariables = JsonSerializer
+                    .Deserialize<Dictionary<string, string>>(
+                        File.ReadAllText(variables.FullName));
+
             Console.WriteLine("TODO: Implement RenderTemplateFile");
         }
 
-        private static void RenderTemplateDirectory(DirectoryInfo arg1, DirectoryInfo arg2, FileInfo arg3, FileInfo arg4)
+        private static void RenderTemplateDirectory(DirectoryInfo template, DirectoryInfo output, FileInfo variables, FileInfo gitignore)
         {
+            // TODO: Figure out how the CommandLine models can handle this parsing step...
+            var templateVariables = JsonSerializer
+                    .Deserialize<Dictionary<string, string>>(
+                        File.ReadAllText(variables.FullName));
+
             Console.WriteLine("TODO: Implement RenderTemplateDirectory");
         }
 
