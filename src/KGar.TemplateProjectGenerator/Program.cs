@@ -12,45 +12,42 @@ namespace KGar.TemplateProjectGenerator
     {
         internal static Task<int> Main(string[] args)
         {
+            var directoryCommand = new Command("dir", "Recursively render template content starting in a specified directory.")
+            {
+                new Argument<string>("--template", "The directory of the template content."),
+                new Argument<string>("--output", "The directory where the rendered content should be placed."),
+                new Argument<string>("--variablesJsonPath", "The path to a JSON file with a flat object of template variables and their values."),
+                new Option<string>("--gitignorePath", "The path to an optional gitignore file to filter out content when performing the operation."),
+            };
+            directoryCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo, FileInfo, FileInfo>(RenderTemplateDirectory);
+
+            var fileCommand = new Command("file", "Render a template file.")
+            {
+                new Argument<string>("--template", "The directory of the template content."),
+                new Argument<string>("--output", "The directory where the rendered content should be placed."),
+                new Argument<string>("--variablesJsonPath", "The path to a JSON file with a flat object of template variables and their values."),
+            };
+            fileCommand.Handler = CommandHandler.Create<FileInfo, FileInfo, FileInfo>(RenderTemplateFile);
+
             var rootCommand = new RootCommand
             {
-                new Argument<string>(
-                    "--templatePath",
-                    "The path to the template directory or file."),
-                new Argument<DirectoryInfo>(
-                    "--outputPath",
-                    "The path to the destination directory or file."),
-                new Argument<FileInfo>(
-                    "--templateVariablesPath",
-                    "The path to the JSON template variables object."),
-                new Option<FileInfo> (
-                    "--gitignore",
-                    "Optional path to a gitignore file to use when determining what to copy.")
+                directoryCommand,
+                fileCommand
             };
+
             rootCommand.Description = "TODO: Describe meeeeeee";
 
-            rootCommand.Handler = CommandHandler.Create<string, DirectoryInfo, FileInfo, FileInfo>((
-                templatePath,
-                outputPath,
-                templateVariablesPath,
-                gitignore) =>
-            {
-                var templateVariables = JsonSerializer
-                    .Deserialize<Dictionary<string, string>>(
-                        File.ReadAllText(templateVariablesPath.FullName));
-
-                var args = new Args
-                {
-                    TemplatePath = templatePath,
-                    OutputDirectory = outputPath,
-                    TemplateVariables = templateVariables,
-                    Gitignore = gitignore
-                };
-
-                GenerateFromTemplate(args);
-            });
-
             return rootCommand.InvokeAsync(args);
+        }
+
+        private static void RenderTemplateFile(FileInfo arg1, FileInfo arg2, FileInfo arg3)
+        {
+            Console.WriteLine("TODO: Implement RenderTemplateFile");
+        }
+
+        private static void RenderTemplateDirectory(DirectoryInfo arg1, DirectoryInfo arg2, FileInfo arg3, FileInfo arg4)
+        {
+            Console.WriteLine("TODO: Implement RenderTemplateDirectory");
         }
 
         private static void GenerateFromTemplate(Args args)
