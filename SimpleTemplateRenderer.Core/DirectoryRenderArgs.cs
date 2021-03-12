@@ -1,13 +1,13 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace KGar.TemplateProjectGenerator
+namespace SimpleTemplateRenderer
 {
-    internal class DirectoryRenderArgs
+    public class DirectoryRenderArgs
     {
         public DirectoryInfo TemplateDirectory { get; set; }
         public DirectoryInfo OutputDirectory { get; set; }
         public FileInfo Gitignore { get; set; }
-        public Dictionary<string, string> TemplateVariables { get; internal set; }
+        public Dictionary<string, string> TemplateVariables { get; set; }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
@@ -7,7 +6,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace KGar.TemplateProjectGenerator
+namespace SimpleTemplateRenderer.Console
 {
     internal static class Program
     {
@@ -55,7 +54,7 @@ namespace KGar.TemplateProjectGenerator
                 TemplateVariables = templateVariables
             };
 
-            RenderFileFromTemplate(args);
+            FileTemplateRenderer.RenderFileFromTemplate(args);
         }
 
         private static void RenderTemplateDirectory(DirectoryInfo template, DirectoryInfo output, FileInfo variables, FileInfo gitignore)
@@ -73,76 +72,7 @@ namespace KGar.TemplateProjectGenerator
                 Gitignore = gitignore
             };
 
-            RenderDirectoryFromTemplate(args);
-        }
-
-        private static void RenderDirectoryFromTemplate(DirectoryRenderArgs args)
-        {
-            var files = Directory.GetFiles(args.TemplateDirectory.FullName, "*", SearchOption.AllDirectories);
-
-            var ignore = new Ignore.Ignore();
-            bool ignoreFiles = args.Gitignore?.Exists == true;
-            if (ignoreFiles)
-            {
-                var patterns = File
-                    .ReadAllLines(args.Gitignore.FullName)
-                    .Where(x =>
-                        !x.Trim().StartsWith("#") &&
-                        !string.IsNullOrWhiteSpace(x));
-                ignore.Add(patterns);
-            }
-
-            foreach (var templateFile in files)
-            {
-                var templateFileInfo = new FileInfo(templateFile);
-                var templateFileRelativePath = templateFileInfo.FullName.Replace(args.TemplateDirectory.FullName, string.Empty).TrimStart('\\');
-
-                if (ignoreFiles && ignore.IsIgnored(UseLinuxStyleRelativePath(templateFileRelativePath)))
-                {
-                    continue;
-                }
-
-                var outputFileInfo = new FileInfo(
-                    Path.Combine(
-                        args.OutputDirectory.FullName,
-                        templateFileRelativePath));
-
-                var fileRenderArgs = new FileRenderArgs
-                {
-                    TemplateFile = templateFileInfo,
-                    OutputFile = outputFileInfo,
-                    TemplateVariables = args.TemplateVariables
-                };
-
-                RenderFileFromTemplate(fileRenderArgs);
-            }
-
-            static string UseLinuxStyleRelativePath(string templateFileRelativePath)
-            {
-                return templateFileRelativePath.Replace('\\', '/');
-            }
-        }
-
-        private static void RenderFileFromTemplate(FileRenderArgs args)
-        {
-            var transformedTargetFile = new FileInfo(TransformText(args.OutputFile.FullName, args.TemplateVariables));
-
-            var text = File.ReadAllText(args.TemplateFile.FullName);
-            var transformedText = TransformText(text, args.TemplateVariables);
-
-            transformedTargetFile.Directory.Create();
-
-            File.WriteAllText(transformedTargetFile.FullName, transformedText);
-        }
-
-        private static string TransformText(string text, Dictionary<string, string> variables)
-        {
-            foreach (var kvp in variables)
-            {
-                text = text.Replace(kvp.Key, kvp.Value);
-            }
-
-            return text;
+            DirectoryTemplateRenderer.Render(args);
         }
     }
 }

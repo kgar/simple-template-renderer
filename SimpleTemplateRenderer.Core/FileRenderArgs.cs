@@ -1,12 +1,12 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace KGar.TemplateProjectGenerator
+namespace SimpleTemplateRenderer
 {
-    internal class FileRenderArgs
+    public class FileRenderArgs
     {
         public FileInfo TemplateFile { get; set; }
         public FileInfo OutputFile { get; set; }
-        public Dictionary<string, string> TemplateVariables { get; internal set; }
+        public Dictionary<string, string> TemplateVariables { get; set; }
     }
 }
