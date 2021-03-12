@@ -97,7 +97,7 @@ namespace KGar.TemplateProjectGenerator
                 var templateFileInfo = new FileInfo(templateFile);
                 var templateFileRelativePath = templateFileInfo.FullName.Replace(args.TemplateDirectory.FullName, string.Empty).TrimStart('\\');
 
-                if (ignoreFiles && ignore.IsIgnored(templateFileRelativePath))
+                if (ignoreFiles && ignore.IsIgnored(UseLinuxStyleRelativePath(templateFileRelativePath)))
                 {
                     continue;
                 }
@@ -115,6 +115,11 @@ namespace KGar.TemplateProjectGenerator
                 };
 
                 RenderFileFromTemplate(fileRenderArgs);
+            }
+
+            static string UseLinuxStyleRelativePath(string templateFileRelativePath)
+            {
+                return templateFileRelativePath.Replace('\\', '/');
             }
         }
 
