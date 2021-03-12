@@ -125,10 +125,13 @@ namespace KGar.TemplateProjectGenerator
 
         private static void RenderFileFromTemplate(FileRenderArgs args)
         {
-            var text = File.ReadAllText(args.TemplateFile.FullName);
             var transformedTargetFile = new FileInfo(TransformText(args.OutputFile.FullName, args.TemplateVariables));
+
+            var text = File.ReadAllText(args.TemplateFile.FullName);
             var transformedText = TransformText(text, args.TemplateVariables);
+
             transformedTargetFile.Directory.Create();
+
             File.WriteAllText(transformedTargetFile.FullName, transformedText);
         }
 
