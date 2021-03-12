@@ -10,13 +10,16 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/src/KGar.TemplateProjectGenerator/bin/Debug/net5.0/KGar.TemplateProjectGenerator.dll",
+      "program": "${workspaceFolder}/KGar.TemplateProjectGenerator/bin/Debug/net5.0/template-renderer.dll",
       "args": [
-        "E:\\Workbench\\programming-game-ai-by-example\\Buckland_Chapter2-State Machines\\WestWorldWithMessagingCSharp\\WestWorld1.csproj",
-        "C:\\Test",
-        "E:\\Workbench\\dotnet-template-project-generator\\template-variables.json"
+        "dir",
+        "C:\\Test\\__TemplateDirName__",
+        "C:\\Test\\__TemplateDirName__",
+        "C:\\Test\\directory-test-variables.json",
+        "--gitignore",
+        "C:\\Test\\.gitignore"
       ],
-      "cwd": "${workspaceFolder}/src/KGar.TemplateProjectGenerator",
+      "cwd": "${workspaceFolder}/KGar.TemplateProjectGenerator",
       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
       "console": "internalConsole",
       "stopAtEntry": false
