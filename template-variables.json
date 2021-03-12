@@ -1,4 +1,4 @@
 {
-  "Message": "Hello from a template variable JSON file!",
-  "TemplateName": "Generated"
+  "__Message__": "Hello from a template variable JSON file!",
+  "__TemplateName__": "Generated"
 }

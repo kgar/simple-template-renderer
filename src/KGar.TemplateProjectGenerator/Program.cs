@@ -23,8 +23,8 @@ namespace KGar.TemplateProjectGenerator
 
             var fileCommand = new Command("file", "Render a template file.")
             {
-                new Argument<FileInfo>("template", "The directory of the template content."),
-                new Argument<FileInfo>("output", "The directory where the rendered content should be placed."),
+                new Argument<FileInfo>("template", "The file path to the template file."),
+                new Argument<FileInfo>("output", "The file path where the rendered content should be placed."),
                 new Argument<FileInfo>("variables", "The path to a JSON file with a flat object of template variables and their values."),
             };
             fileCommand.Handler = CommandHandler.Create<FileInfo, FileInfo, FileInfo>(RenderTemplateFile);
@@ -46,8 +46,15 @@ namespace KGar.TemplateProjectGenerator
             var templateVariables = JsonSerializer
                    .Deserialize<Dictionary<string, string>>(
                        File.ReadAllText(variables.FullName));
-            
-            Console.WriteLine("TODO: Implement RenderTemplateFile");
+
+            var args = new FileRenderArgs
+            {
+                TemplateFile = template,
+                OutputFile = output,
+                TemplateVariables = templateVariables
+            };
+
+            RenderFileFromTemplate(args);
         }
 
         private static void RenderTemplateDirectory(DirectoryInfo template, DirectoryInfo output, FileInfo variables, FileInfo gitignore)
@@ -60,58 +67,43 @@ namespace KGar.TemplateProjectGenerator
             Console.WriteLine("TODO: Implement RenderTemplateDirectory");
         }
 
-        private static void GenerateFromTemplate(Args args)
+        // private static void GenerateFromTemplate(FileRenderArgs args)
+        // {
+        //     var files = Directory.GetFiles(args.TemplatePath, "*", SearchOption.AllDirectories);
+        //     var ignore = new Ignore.Ignore();
+        //     if (args.Gitignore.Exists)
+        //     {
+        //         ignore.Add(File.ReadAllLines(args.Gitignore.FullName));
+        //     }
+
+        //     foreach (var file in files)
+        //     {
+        //         if (ignore.IsIgnored(file))
+        //         {
+        //             continue;
+        //         }
+
+        //         RenderFileFromTemplate(args, file);
+        //     }
+        // }
+
+        private static void RenderFileFromTemplate(FileRenderArgs args)
         {
-            var files = Directory.GetFiles(args.TemplatePath, "*", SearchOption.AllDirectories);
-            var ignore = new Ignore.Ignore();
-            if (args.Gitignore.Exists)
-            {
-                ignore.Add(File.ReadAllLines(args.Gitignore.FullName));
-            }
-
-            foreach (var file in files)
-            {
-                if (ignore.IsIgnored(file))
-                {
-                    continue;
-                }
-
-                var text = File.ReadAllText(file);
-                Console.WriteLine($"source: {file}");
-                Console.WriteLine($"original contents: {text}");
-
-                var templateDirectory = Directory.Exists(args.TemplatePath)
-                    ? args.TemplatePath
-                    : Path.GetDirectoryName(args.TemplatePath);
-
-                var targetSubPath = file.Replace(templateDirectory, string.Empty);
-                var target = Path.Combine(args.OutputDirectory.FullName, targetSubPath);
-                Console.WriteLine($"target: {target}");
-
-                var transformedTarget = TransformText(target, args.TemplateVariables);
-                Console.WriteLine($"transformed target: {transformedTarget}");
-
-                var transformedText = TransformText(text, args.TemplateVariables);
-                Console.WriteLine($"transformed contents: {transformedText}");
-            }
+            var text = File.ReadAllText(args.TemplateFile.FullName);
+            var transformedTargetFile = new FileInfo(TransformText(args.OutputFile.FullName, args.TemplateVariables));
+            var transformedText = TransformText(text, args.TemplateVariables);
+            transformedTargetFile.Directory.Create();
+            File.WriteAllText(transformedTargetFile.FullName, transformedText);
         }
 
         private static string TransformText(string text, Dictionary<string, string> variables)
         {
-            // TODO: See if string replace can take an array of criteria
-            foreach (var key in variables.Keys)
+            foreach (var kvp in variables)
             {
-                var token = GetTemplateToken(key);
-                var replacementValue = variables[key];
-                text = text.Replace(token, replacementValue);
+                text = text.Replace(kvp.Key, kvp.Value);
             }
 
             return text;
-        }
-
-        private static string GetTemplateToken(string variableName)
-        {
-            return $"__{variableName}__";
         }
 
         private static void WriteError(string message)
