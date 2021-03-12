@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -64,28 +65,58 @@ namespace KGar.TemplateProjectGenerator
                    .Deserialize<Dictionary<string, string>>(
                        File.ReadAllText(variables.FullName));
 
-            Console.WriteLine("TODO: Implement RenderTemplateDirectory");
+            var args = new DirectoryRenderArgs
+            {
+                TemplateDirectory = template,
+                OutputDirectory = output,
+                TemplateVariables = templateVariables,
+                Gitignore = gitignore
+            };
+
+            RenderDirectoryFromTemplate(args);
         }
 
-        // private static void GenerateFromTemplate(FileRenderArgs args)
-        // {
-        //     var files = Directory.GetFiles(args.TemplatePath, "*", SearchOption.AllDirectories);
-        //     var ignore = new Ignore.Ignore();
-        //     if (args.Gitignore.Exists)
-        //     {
-        //         ignore.Add(File.ReadAllLines(args.Gitignore.FullName));
-        //     }
+        private static void RenderDirectoryFromTemplate(DirectoryRenderArgs args)
+        {
+            var files = Directory.GetFiles(args.TemplateDirectory.FullName, "*", SearchOption.AllDirectories);
 
-        //     foreach (var file in files)
-        //     {
-        //         if (ignore.IsIgnored(file))
-        //         {
-        //             continue;
-        //         }
+            var ignore = new Ignore.Ignore();
+            bool ignoreFiles = args.Gitignore?.Exists == true;
+            if (ignoreFiles)
+            {
+                var patterns = File
+                    .ReadAllLines(args.Gitignore.FullName)
+                    .Where(x =>
+                        !x.Trim().StartsWith("#") &&
+                        !string.IsNullOrWhiteSpace(x));
+                ignore.Add(patterns);
+            }
 
-        //         RenderFileFromTemplate(args, file);
-        //     }
-        // }
+            foreach (var templateFile in files)
+            {
+                var templateFileInfo = new FileInfo(templateFile);
+                var templateFileRelativePath = templateFileInfo.FullName.Replace(args.TemplateDirectory.FullName, string.Empty).TrimStart('\\');
+
+                if (ignoreFiles && ignore.IsIgnored(templateFileRelativePath))
+                {
+                    continue;
+                }
+
+                var outputFileInfo = new FileInfo(
+                    Path.Combine(
+                        args.OutputDirectory.FullName,
+                        templateFileRelativePath));
+
+                var fileRenderArgs = new FileRenderArgs
+                {
+                    TemplateFile = templateFileInfo,
+                    OutputFile = outputFileInfo,
+                    TemplateVariables = args.TemplateVariables
+                };
+
+                RenderFileFromTemplate(fileRenderArgs);
+            }
+        }
 
         private static void RenderFileFromTemplate(FileRenderArgs args)
         {
@@ -104,13 +135,6 @@ namespace KGar.TemplateProjectGenerator
             }
 
             return text;
-        }
-
-        private static void WriteError(string message)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(message);
-            Console.ResetColor();
         }
     }
 }
