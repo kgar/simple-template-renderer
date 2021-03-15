@@ -1,9 +1,21 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <RootNamespace>SimpleTemplateRenderer</RootNamespace>
     <Version>1.0.0</Version>
+    <Authors>KGar</Authors>
+    <Company>KGar Software</Company>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/kgar/simple-template-renderer</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/kgar/simple-template-renderer</RepositoryUrl>
+    <PackageTags>simple template renderer dotnet tool command line tools</PackageTags>
+    <Description>
+      A simple template renderer that takes a variables JSON file, targets a file or a directory, and will perform simple find and replace based on the variables JSON, outputting the files to a specified location.
+
+      To get started, install the tool as a global `dotnet tool` and enter `simple-template-renderer.exe --help`.
+    </Description>
+    <Copyright>KGar Software</Copyright>
   </PropertyGroup>
 
   <ItemGroup>

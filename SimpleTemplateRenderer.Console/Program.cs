@@ -36,7 +36,12 @@ namespace SimpleTemplateRenderer.Console
                 fileCommand
             };
 
-            rootCommand.Description = "TODO: Describe meeeeeee";
+            rootCommand.Description = @"A simple template rendering tool that takes a JSON file 
+with a list of key/value pairs, a target file or directory, 
+and an output file or directory. It goes through the indicated file(s), 
+performs a find/replace on the file contents, 
+and writes the new file(s) to the specified output location. 
+Optionally, it can also transform the file paths.";
 
             return rootCommand.InvokeAsync(args);
         }
