@@ -40,7 +40,8 @@ namespace SimpleTemplateRenderer
                 {
                     TemplateFile = templateFileInfo,
                     OutputFile = outputFileInfo,
-                    TemplateVariables = args.TemplateVariables
+                    TemplateVariables = args.TemplateVariables,
+                    TransformFilePath = args.TransformFilePath
                 };
 
                 FileTemplateRenderer.RenderFileFromTemplate(fileRenderArgs);

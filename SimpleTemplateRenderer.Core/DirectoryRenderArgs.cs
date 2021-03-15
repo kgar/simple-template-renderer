@@ -9,5 +9,6 @@ namespace SimpleTemplateRenderer
         public DirectoryInfo OutputDirectory { get; set; }
         public FileInfo Gitignore { get; set; }
         public Dictionary<string, string> TemplateVariables { get; set; }
+        public bool TransformFilePath { get; set; }
     }
 }

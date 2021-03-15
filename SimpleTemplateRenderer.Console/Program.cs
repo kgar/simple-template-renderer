@@ -18,16 +18,18 @@ namespace SimpleTemplateRenderer.Console
                 new Argument<DirectoryInfo>("output", "The directory where the rendered content should be placed."),
                 new Argument<FileInfo>("variables", "The path to a JSON file with a flat object of template variables and their values."),
                 new Option<FileInfo>("--gitignore", "The path to an optional gitignore file to filter out content when performing the operation."),
+                new Option<bool>("--transformFilePath", "Apply transform variables to file paths.")
             };
-            directoryCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo, FileInfo, FileInfo>(RenderTemplateDirectory);
+            directoryCommand.Handler = CommandHandler.Create<DirectoryInfo, DirectoryInfo, FileInfo, FileInfo, bool>(RenderTemplateDirectory);
 
             var fileCommand = new Command("file", "Render a template file.")
             {
                 new Argument<FileInfo>("template", "The file path to the template file."),
                 new Argument<FileInfo>("output", "The file path where the rendered content should be placed."),
                 new Argument<FileInfo>("variables", "The path to a JSON file with a flat object of template variables and their values."),
+                new Option<bool>("--transformFilePath", "Apply transform variables to file paths.")
             };
-            fileCommand.Handler = CommandHandler.Create<FileInfo, FileInfo, FileInfo>(RenderTemplateFile);
+            fileCommand.Handler = CommandHandler.Create<FileInfo, FileInfo, FileInfo, bool>(RenderTemplateFile);
 
             var rootCommand = new RootCommand
             {
@@ -40,7 +42,7 @@ namespace SimpleTemplateRenderer.Console
             return rootCommand.InvokeAsync(args);
         }
 
-        private static void RenderTemplateFile(FileInfo template, FileInfo output, FileInfo variables)
+        private static void RenderTemplateFile(FileInfo template, FileInfo output, FileInfo variables, bool transformFilePath)
         {
             // TODO: Figure out how the CommandLine models can handle this parsing step...
             var templateVariables = JsonSerializer
@@ -51,13 +53,14 @@ namespace SimpleTemplateRenderer.Console
             {
                 TemplateFile = template,
                 OutputFile = output,
-                TemplateVariables = templateVariables
+                TemplateVariables = templateVariables,
+                TransformFilePath = transformFilePath
             };
 
             FileTemplateRenderer.RenderFileFromTemplate(args);
         }
 
-        private static void RenderTemplateDirectory(DirectoryInfo template, DirectoryInfo output, FileInfo variables, FileInfo gitignore)
+        private static void RenderTemplateDirectory(DirectoryInfo template, DirectoryInfo output, FileInfo variables, FileInfo gitignore, bool transformFilePath)
         {
             // TODO: Figure out how the CommandLine models can handle this parsing step...
             var templateVariables = JsonSerializer
@@ -69,7 +72,8 @@ namespace SimpleTemplateRenderer.Console
                 TemplateDirectory = template,
                 OutputDirectory = output,
                 TemplateVariables = templateVariables,
-                Gitignore = gitignore
+                Gitignore = gitignore,
+                TransformFilePath = transformFilePath
             };
 
             DirectoryTemplateRenderer.Render(args);

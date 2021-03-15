@@ -6,14 +6,16 @@ namespace SimpleTemplateRenderer
     {
         public static void RenderFileFromTemplate(FileRenderArgs args)
         {
-            var transformedTargetFile = new FileInfo(FindReplaceTextTransformer.Transform(args.OutputFile.FullName, args.TemplateVariables));
+            var targetFile = args.TransformFilePath
+                ? new FileInfo(FindReplaceTextTransformer.Transform(args.OutputFile.FullName, args.TemplateVariables))
+                : args.OutputFile;
 
             var text = File.ReadAllText(args.TemplateFile.FullName);
             var transformedText = FindReplaceTextTransformer.Transform(text, args.TemplateVariables);
 
-            transformedTargetFile.Directory.Create();
+            targetFile.Directory.Create();
 
-            File.WriteAllText(transformedTargetFile.FullName, transformedText);
+            File.WriteAllText(targetFile.FullName, transformedText);
         }
     }
 }
