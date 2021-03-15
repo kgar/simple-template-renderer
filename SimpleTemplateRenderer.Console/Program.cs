@@ -2,7 +2,6 @@
 using System.CommandLine;
 using System.CommandLine.Invocation;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -42,7 +41,11 @@ namespace SimpleTemplateRenderer.Console
             return rootCommand.InvokeAsync(args);
         }
 
-        private static void RenderTemplateFile(FileInfo template, FileInfo output, FileInfo variables, bool transformFilePath)
+        private static void RenderTemplateFile(
+            FileInfo template, 
+            FileInfo output, 
+            FileInfo variables, 
+            bool transformFilePath)
         {
             // TODO: Figure out how the CommandLine models can handle this parsing step...
             var templateVariables = JsonSerializer
@@ -60,7 +63,12 @@ namespace SimpleTemplateRenderer.Console
             FileTemplateRenderer.RenderFileFromTemplate(args);
         }
 
-        private static void RenderTemplateDirectory(DirectoryInfo template, DirectoryInfo output, FileInfo variables, FileInfo gitignore, bool transformFilePath)
+        private static void RenderTemplateDirectory(
+            DirectoryInfo template, 
+            DirectoryInfo output, 
+            FileInfo variables, 
+            FileInfo gitignore, 
+            bool transformFilePath)
         {
             // TODO: Figure out how the CommandLine models can handle this parsing step...
             var templateVariables = JsonSerializer
