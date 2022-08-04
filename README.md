@@ -1,6 +1,6 @@
-# Simple Template Generator
+# Simple Template Renderer
 
-Simple Template Generator is just that: a very simple tool that can take a file or directory, perform some key-value-pair find/replace on file names and file text, and write the result to a specified location.
+Simple Template Renderer is just that: a very simple tool that can take a file or directory, perform some key-value-pair find/replace on file names and file text, and write the result to a specified location.
 
 ## This is a `dotnet tool` on NuGet.org
 
